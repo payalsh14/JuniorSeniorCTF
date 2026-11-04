@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Euronova CTF Rooms</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap">
+<style>
+:root{--bg:#10131f;--surface:#181c2c;--line:#2a3050;--text:#eef0f8;--muted:#9aa2c4;--accent:#ffb84d;--accent-ink:#1a1204;--ok:#5fd4a0;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10131f}}
+:root[data-theme="light"]{--bg:#f6f4ee;--surface:#fff;--line:#ddd8c8;--text:#171a2b;--muted:#5b6285;--accent:#c46a00;--accent-ink:#fff;--ok:#127a52}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5}
+.wrap{max-width:1000px;margin:0 auto;padding:0 20px}
+header{padding:56px 0 28px}
+h1{font-size:clamp(2.4rem,7vw,4.4rem);line-height:1;margin:0 0 14px;font-weight:800;letter-spacing:-.03em}
+header p{max-width:56ch;margin:0;color:var(--muted);font-size:1.05rem}
+.bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin:28px 0 22px}
+.tabs{display:flex;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:5px}
+.tab{font:inherit;font-weight:600;color:var(--muted);background:none;border:0;border-radius:8px;padding:10px 20px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+.tab:focus-visible,.join:focus-visible,input:focus-visible,.theme:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+input[type=search]{font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 14px;min-width:min(100%,260px)}
+.theme{font:inherit;color:var(--muted);background:none;border:1px solid var(--line);border-radius:10px;padding:10px 14px;cursor:pointer}
+.note{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;color:var(--muted);font-size:.95rem;margin-bottom:26px}
+.note a{color:var(--accent)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:18px;padding-bottom:64px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:10px}
+.card h2{margin:0;font-size:1.35rem;line-height:1.2}
+.by{color:var(--muted);font-size:.92rem;margin:0}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 8px}
+.tag{font-size:.82rem;border:1px solid var(--line);border-radius:999px;padding:3px 11px;color:var(--muted)}
+.tag.d{color:var(--ok);border-color:var(--ok)}
+.meta{color:var(--muted);font-size:.88rem;margin-top:auto}
+.tags{flex:1;align-content:flex-start}
+.join{display:block;text-align:center;text-decoration:none;font-weight:700;background:var(--accent);color:var(--accent-ink);border-radius:10px;padding:12px;margin-top:6px}
+.join:hover{filter:brightness(1.08)}
+.empty{grid-column:1/-1;border:1px dashed var(--line);border-radius:14px;padding:44px 24px;text-align:center;color:var(--muted)}
+.empty strong{display:block;color:var(--text);font-size:1.2rem;margin-bottom:6px}
+
+.join{border:0;font:inherit;font-weight:700;width:100%;cursor:pointer}
+.ok{color:var(--ok);font-weight:600;font-size:.9rem}
+dialog{background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:16px;padding:0;width:min(520px,calc(100% - 32px))}
+dialog::backdrop{background:rgba(5,7,15,.7)}
+.dlg{padding:24px;display:flex;flex-direction:column;gap:14px}
+.dlg h2{margin:0;font-size:1.5rem}.dlg p{margin:0;color:var(--muted)}
+.x{align-self:flex-end;background:none;border:0;color:var(--muted);font:inherit;cursor:pointer}
+.row{display:flex;gap:8px}.row input{flex:1;min-width:0}
+input[type=text]{font:inherit;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px 14px}
+input[type=text]:focus-visible,.x:focus-visible,.team:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn{font:inherit;font-weight:700;background:var(--accent);color:var(--accent-ink);border:0;border-radius:10px;padding:11px 18px;cursor:pointer;text-decoration:none;text-align:center}
+.btn.alt{background:none;color:var(--text);border:1px solid var(--line)}
+.res{min-height:1.4em;font-weight:600}.res.good{color:var(--ok)}.res.bad{color:#ff7a7a}
+.warn{font-size:.85rem;color:var(--muted)}
+.teams{display:grid;gap:10px;padding-bottom:64px}
+.team{font:inherit;color:var(--text);text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;cursor:pointer;display:flex;justify-content:space-between;gap:12px}
+.team[aria-expanded="true"]{border-color:var(--accent)}
+.detail{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:6px 18px;margin:-4px 0 8px}
+.tr{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+.tr:last-child{border:0}.st{font-weight:600}.st.s{color:var(--ok)}.st.a{color:var(--accent)}.st.n{color:var(--muted)}
+footer{border-top:1px solid var(--line);padding:24px 0 40px;color:var(--muted);font-size:.88rem}
+@media (prefers-reduced-motion:no-preference){.join{transition:filter .15s}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:12px;max-width:520px;margin-bottom:22px}
+.panel h2{margin:0;font-size:1.3rem}.panel label{font-size:.88rem;color:var(--muted)}
+select{font:inherit;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px 14px}
+select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.who{font-weight:600}[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<h1>Euronova CTF rooms</h1>
+<p>Register your team, open your rooms, and submit flags here. You compete on the official CyLab Academy platform.</p>
+</header>
+
+<div id="login"></div>
+<div class="bar" id="bar" hidden>
+<div class="who" id="who"></div>
+<input type="search" id="q" placeholder="Search rooms" aria-label="Search rooms">
+<button class="theme" id="out" type="button">Log out</button>
+<button class="theme" id="theme" type="button">Light mode</button>
+</div>
+
+<div class="note" id="note" hidden>Rooms open on CyLab Academy. Create a free account at <a href="https://learn.cylabacademy.org" target="_blank" rel="noopener noreferrer">learn.cylabacademy.org</a> before you join, then use the same account for every room.</div>
+
+<main class="grid" id="grid" role="tabpanel" aria-live="polite"></main>
+<dialog id="dlg"><div class="dlg" id="dbody"></div></dialog>
+</div>
+
+<footer><div class="wrap">Rooms and challenges belong to their authors and CyLab Academy. This site only links to them.</div></footer>
+
+<script>
+// EDIT HERE. flag = SHA-256 hash of the correct flag (never put the plain flag in this file). desc = text shown in the room box.
+var LIBRARY="https://learn.cylabacademy.org/library";
+var ROOMS=[
+ {id:"t1",cat:"junior",title:"Task 1: Undo",topic:"General Skills",desc:"Solve this General Skills challenge in the CyLab room, then bring the flag back here.",flag:"",url:"https://learn.cylabacademy.org/library/766?page=1&difficulty=1&category=5&workspace=true&search=undo"},
+ {id:"t2",cat:"junior",title:"Task 2: SUDO MAKE ME A SANDWICH",topic:"General Skills",desc:"Solve this General Skills challenge in the CyLab room, then bring the flag back here.",flag:"",url:"https://learn.cylabacademy.org/library/766?page=1&difficulty=1&workspace=true&bookmarked=true"},
+ {id:"t3",cat:"junior",title:"Task 3: FANTASY CTF",topic:"General Skills",desc:"Solve this General Skills challenge in the CyLab room, then bring the flag back here.",flag:"",url:"https://learn.cylabacademy.org/library/471?page=1&difficulty=1&workspace=true&category=5&search=fantasy+ctf"},
+ {id:"t4",cat:"junior",title:"Task 4: Rust fixme 1",topic:"General Skills",desc:"Solve this General Skills challenge in the CyLab room, then bring the flag back here.",flag:"",url:"https://learn.cylabacademy.org/library/461?page=1&difficulty=1&workspace=true&bookmarked=true&search=rust+fix"},
+ {id:"t5",cat:"junior",title:"Task 5: Binary Search",topic:"General Skills",desc:"Solve this General Skills challenge in the CyLab room, then bring the flag back here.",flag:"",url:"https://learn.cylabacademy.org/library/442?page=1&difficulty=1&workspace=true&bookmarked=true&search=binary+search"},
+ {id:"t6",cat:"junior",title:"Task 6: Trust But Verify",topic:"Artificial Intelligence",desc:"Solve this Artificial Intelligence challenge in the CyLab room, then bring the flag back here.",flag:"",url:"https://learn.cylabacademy.org/library/783?page=1&difficulty=1&search=Trust+But+Verify"},
+ {id:"s1",cat:"senior",title:"Task 1: Blame Game",topic:"General Skills",desc:"Solve this General Skills challenge in the CyLab room, then bring the flag back here.",flag:"",url:"https://learn.cylabacademy.org/library/405?page=1&search=blame+game"},
+ {id:"s2",cat:"senior",title:"Task 2: Commitment Issue",topic:"General Skills",desc:"Solve this General Skills challenge in the CyLab room, then bring the flag back here.",flag:"",url:"https://learn.cylabacademy.org/library/411?page=1&search=commitment+issue"},
+ {id:"s3",cat:"senior",title:"Task 3: My Git",topic:"General Skills",desc:"Solve this General Skills challenge in the CyLab room, then bring the flag back here.",flag:"",url:"https://learn.cylabacademy.org/library/764?page=1&search=my+git"},
+ {id:"s4",cat:"senior",title:"Task 4: Piece by Piece",topic:"General Skills",desc:"Solve this General Skills challenge in the CyLab room, then bring the flag back here.",flag:"",url:"https://learn.cylabacademy.org/library/740?page=1&search=piece+by+piece"},
+ {id:"s5",cat:"senior",title:"Task 5: Rust fixme 2",topic:"General Skills",desc:"Solve this General Skills challenge in the CyLab room, then bring the flag back here.",flag:"",url:"https://learn.cylabacademy.org/library/462?page=1&search=rust+fixme+2"},
+ {id:"s6",cat:"senior",title:"Task 6: Time Machine",topic:"General Skills",desc:"Solve this General Skills challenge in the CyLab room, then bring the flag back here.",flag:"",url:"https://learn.cylabacademy.org/library/425?page=1&search=Time+Machine"}
+];
+var grid=document.getElementById("grid"),q=document.getElementById("q"),dlg=document.getElementById("dlg"),dbody=document.getElementById("dbody"),note=document.getElementById("note"),login=document.getElementById("login"),bar=document.getElementById("bar"),who=document.getElementById("who");
+var online=true,subs=[],regs=[],open="",armed="",mine={},sess=null,view="login",jpw="",timer=null;
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e}
+function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){}return null}
+function slug(n){return n.trim().toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
+function api(body){return fetch("/api/data",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}).then(function(r){if(!r.ok){var e=new Error("http");e.status=r.status;throw e}return r.json()}).then(function(j){online=true;return j}).catch(function(e){if(!e.status)online=false;throw e})}
+function loadJudge(){return api({action:"list",password:jpw}).then(function(j){regs=j.teams;subs=j.subs;if(view==="judge")render()}).catch(function(){if(view==="judge")render()})}
+function register(){if(sess)api({action:"register",team:sess.team,members:sess.members,cat:sess.cat}).catch(function(){})}
+try{sess=JSON.parse(ls("sess")||"null")}catch(e){}
+if(sess){view="play";register()}
+function mk(l,id,node){var w=el("div");var lb=el("label","",l);lb.htmlFor=id;node.id=id;w.appendChild(lb);w.appendChild(node);w.style.display="flex";w.style.flexDirection="column";w.style.gap="6px";return w}
+
+function render(){
+ grid.textContent="";login.textContent="";
+ var isLogin=view==="login";bar.hidden=isLogin;note.hidden=view!=="play";
+ if(isLogin)return loginPage();
+ q.hidden=view==="judge";
+ who.textContent=view==="judge"?"Judge page":sess.team+" · "+(sess.cat==="junior"?"Junior":"Senior");
+ if(view==="judge"){grid.className="teams";return judge()}
+ grid.className="grid";
+ var s=q.value.trim().toLowerCase();try{mine=JSON.parse(ls("solved_"+slug(sess.team))||"{}")}catch(e){mine={}}
+ var list=ROOMS.filter(function(r){return r.cat===sess.cat&&(r.title+" "+r.topic).toLowerCase().indexOf(s)>-1});
+ if(!list.length){var m=el("div","empty");m.appendChild(el("strong","",s?"No rooms match your search":"No rooms yet"));m.appendChild(el("span","",s?"Try a different word.":"Rooms for your category will appear here once they are added."));grid.appendChild(m);return}
+ list.forEach(function(r){
+  var c=el("article","card");c.appendChild(el("h2","",r.title));
+  var t=el("div","tags");t.appendChild(el("span","tag",r.topic));c.appendChild(t);
+  if(mine[r.id])c.appendChild(el("div","ok",mine[r.id]==="done"?"Done":"Trying"));
+  var b=el("button","join","Join room");b.type="button";b.addEventListener("click",function(){openRoom(r)});c.appendChild(b);grid.appendChild(c)})
+}
+
+function loginPage(){
+ var p=el("div","panel");p.appendChild(el("h2","","Team login"));
+ var tn=el("input");tn.type="text";tn.maxLength=40;tn.placeholder="e.g. Byte Force";
+ var pt=el("input");pt.type="text";pt.maxLength=120;pt.placeholder="Names separated by commas";
+ var cs=el("select");[["junior","Junior"],["senior","Senior"]].forEach(function(o){var op=el("option","",o[1]);op.value=o[0];cs.appendChild(op)});
+ p.appendChild(mk("Team name","tn",tn));p.appendChild(mk("Participants","pt",pt));p.appendChild(mk("Category","cs",cs));
+ var er=el("div","res bad");er.setAttribute("aria-live","polite");
+ var go=el("button","btn","Enter contest");go.type="button";
+ go.onclick=function(){
+  var n=tn.value.trim(),m=pt.value.trim();
+  if(!n||!m){er.textContent="Enter a team name and at least one participant.";return}
+  sess={team:n,members:m,cat:cs.value};ls("sess",JSON.stringify(sess));view="play";register();render()};
+ p.appendChild(go);p.appendChild(er);login.appendChild(p);
+ var j=el("div","panel");j.appendChild(el("h2","","Judges"));
+ var pw=el("input");pw.type="password";pw.autocomplete="off";
+ j.appendChild(mk("Judge password","jp",pw));
+ var je=el("div","res bad");je.setAttribute("aria-live","polite");
+ var jb=el("button","btn alt","Open judge page");jb.type="button";
+ function jg(){jpw=pw.value;je.textContent="";
+  api({action:"list",password:jpw}).then(function(d){regs=d.teams;subs=d.subs;view="judge";open="";if(timer)clearInterval(timer);timer=setInterval(loadJudge,8000);render()})
+  .catch(function(e){je.textContent=e.status===401?"Wrong password.":e.status===500?"Server is not set up yet (see README).":"Could not reach the server."})}
+ jb.onclick=jg;pw.addEventListener("keydown",function(e){if(e.key==="Enter")jg()});
+ j.appendChild(jb);j.appendChild(je);login.appendChild(j);
+}
+
+function openRoom(r){
+ dbody.textContent="";
+ var x=el("button","x","Close");x.type="button";x.onclick=function(){dlg.close()};dbody.appendChild(x);
+ dbody.appendChild(el("h2","",r.title));dbody.appendChild(el("p","",r.desc));
+ var a=el("a","btn","Enter room on CyLab");a.href=r.url||LIBRARY;a.target="_blank";a.rel="noopener noreferrer";dbody.appendChild(a);
+ var st=el("div","res");st.setAttribute("aria-live","polite");
+ function show(){var v=mine[r.id];st.textContent=v==="done"?"Marked as done.":v==="trying"?"Marked as trying.":"";st.className="res "+(v==="done"?"good":"")}
+ a.addEventListener("click",function(){setStatus(r,"trying");show()});
+ var dn=el("button","btn alt","Done");dn.type="button";
+ dn.onclick=function(){if(!mine[r.id]){st.textContent="Enter the room on CyLab first.";st.className="res bad";return}setStatus(r,"done");show()};
+ dbody.appendChild(dn);dbody.appendChild(st);show();
+ if(!online)dbody.appendChild(el("p","warn","Your progress could not be sent to the judges. Check your connection."));
+ dlg.showModal();
+}
+
+function setStatus(r,status){
+ if(mine[r.id]==="done")return;
+ mine[r.id]=status;ls("solved_"+slug(sess.team),JSON.stringify(mine));render();
+ api({action:"status",team:sess.team,members:sess.members,cat:sess.cat,task:r.id,status:status}).catch(function(){})
+}
+
+function removeTeam(k){api({action:"delete",password:jpw,teamKey:k}).then(function(){open="";return loadJudge()}).catch(function(){})}
+
+function judge(){
+ var by={};
+ regs.forEach(function(d){by[d.teamKey]={name:d.team,members:d.members,cat:d.cat,t:{}}});
+ subs.forEach(function(d){var o=by[d.teamKey]=by[d.teamKey]||{name:d.team,members:"",cat:"junior",t:{}};o.t[d.task]=d});
+ var keys=Object.keys(by).sort();
+ var back=el("button","btn alt","Back to login");back.type="button";back.onclick=function(){if(timer)clearInterval(timer);timer=null;jpw="";view=sess?"play":"login";render()};
+ back.style.marginBottom="12px";grid.appendChild(back);
+ if(!online)grid.appendChild(el("p","warn","Cannot reach the server. Showing the last data received."));
+ if(!keys.length){var e=el("div","empty");e.appendChild(el("strong","","No teams yet"));e.appendChild(el("span","","Teams appear here after they log in."));grid.appendChild(e);return}
+ keys.forEach(function(k){
+  var tm=by[k],tasks=ROOMS.filter(function(r){return r.cat===tm.cat}),n=tasks.filter(function(r){return tm.t[r.id]&&tm.t[r.id].status==="done"}).length;
+  var b=el("button","team");b.type="button";b.setAttribute("aria-expanded",open===k);
+  var l=el("span");l.appendChild(el("strong","",tm.name));l.appendChild(el("div","warn",(tm.cat==="junior"?"Junior":"Senior")+(tm.members?" · "+tm.members:"")));
+  b.appendChild(l);b.appendChild(el("span","ok",n+" of "+tasks.length+" done"));
+  b.onclick=function(){open=open===k?"":k;armed="";render()};grid.appendChild(b);
+  if(open===k){var dv=el("div","detail");
+   tasks.forEach(function(r){var d=tm.t[r.id],row=el("div","tr");row.appendChild(el("span","",r.title));
+    row.appendChild(el("span","st "+(d?(d.status==="done"?"s":"a"):"n"),d?(d.status==="done"?"Done at "+new Date(d.at).toLocaleString():"Trying since "+new Date(d.startedAt||d.at).toLocaleString()):"Not tried"));dv.appendChild(row)});
+   var del=el("button","btn alt",armed===k?"Confirm delete (cannot be undone)":"Delete record");del.type="button";del.style.margin="12px 0";
+   del.onclick=function(){if(armed!==k){armed=k;render();return}armed="";removeTeam(k)};
+   dv.appendChild(del);grid.appendChild(dv)}})
+}
+
+q.addEventListener("input",render);
+document.getElementById("out").addEventListener("click",function(){ls("sess",null);sess=null;view="login";render()});
+var tb=document.getElementById("theme");
+tb.addEventListener("click",function(){var l=document.documentElement.dataset.theme==="light";document.documentElement.dataset.theme=l?"dark":"light";tb.textContent=l?"Light mode":"Dark mode"});
+render();
+</script>
+</body>
+</html>
